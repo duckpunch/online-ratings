@@ -2,8 +2,133 @@
     "docs": [
         {
             "location": "/", 
-            "text": "", 
+            "text": "Online Ratings\n\n\n\n\nAGA Online Ratings protocol and implementation\n\n\nThe goal of the AGA Online Ratings Protocol is to provide Go Servers with a\nstandard way to report results between AGA members that happen on their servers\nto us for computing a cross-server rating.\n\n\nOther goals of the project can be found on the \nimplementation plan here\n\n\nUsing the API (Go Server implementers)\n\n\nAll api endpoints accept and return JSON.\nAvailable endpoints:\n  - \nPOST /api/v1/games\n Report a game result.\n  - \nGET /api/v1/games/\ngame_id\n Get a game result by ID\n  - \nGET /api/v1/games/\ngame_id\n/sgf\n Get a game's SGF file by ID\n  - \nGET /api/v1/players/\nplayer_id\n Get a player by ID\n  - \nGET /api/v1/players?token=\ntoken\n Get a player by their secret token.\n\n\nHere's an example request to create a game:\n\n\nPOST /api/v1/games\n  ?server_tok=secret_kgs\n  \nb_tok=player_1_token\n  \nw_tok=player_2_token\n{\n  \nblack_id\n: 1,\n  \nwhite_id\n: 2,\n  \ngame_server\n: \nKGS\n,\n  'rated': True,\n  'result': 'W+R',\n  'date_played': '2015-02-26T10:30:00',\n  'game_record': '(;FF[4]GM[1]SZ[19]CA[UTF-8]BC[ja]WC[ja]EV[54th Japanese Judan]PB[Kono Takashi]BR[8p]PW[O Meien]WR[9p]KM[6.5]DT[2015-02-26]RE[W+R];B[qd];W[dp];B[pq];W[od])'\n}\n\n\n\n\nYou can also submit a \ngame_url\n in lieu of the \ngame_record\n field.\n\nserver_tok\n is the game server's secret token, and \nb_tok\n, \nw_tok\n are the\nplayer's secret tokens. \n\n\nGetting Started (Online Ratings backend developers)\n\n\nOverview\n\n\nBefore you get started working on Online Ratings, you'll need to do some setup:\n\n\n\n\nChoose your package manager\n\n\nInstall Python3 and the relevant dependencies\n\n\nInstall the Docker command line tools.\n\n\nGet set up with a VM to use with Docker\n\n\nBuild and run the app on the VM with Docker\n\n\nlog in using the fake login credentials found in \nweb/create_db.py\n\n\n\n\nPackage Managers\n\n\nThis dev guide assumes a POSIX tool chain. Most developers on this project use OSX.\n\n\n\n\nOSX: Install \nhomebrew\n\n\nLinux/Ubuntu: You should already apt-get installed\n\n\n\n\nPython and Dependencies\n\n\n\n\nInstall Python3\n\n\nOSX: \nbrew install python3\n\n\nLinux: You probably already have Python3 installed. If not: \nsudo apt-get\n  install python3\n\n\n\n\n\n\nInstall \npip\n\n\ncurl https://bootstrap.pypa.io/get-pip.py | python3\n\n\n\n\n\n\nInstall postgres\n\n\nOSX: \nbrew install postgresql\n\n\nLinux: \nSee here\n\n\n\n\n\n\nInstall the python dependencies with pip.\n\n\ncd to \nonline-ratings/web\n directory and run: \npip install -r requirements.txt\n\n\n\n\n\n\nRun the tests!\n\n\ncd to \nonline-ratings/web\n directory and run: \npython3 -m unittest\n  discover\n\n\n\n\n\n\n\n\n[Optional]\n\n\nOptionally, you can install VirtualEnv, which makes working with python versions\na little easier.\n\n\n\n\nInstall Virtual Environment: mkvirtualenv\n\n\npip install virtualenvwrapper\n\n\nAdd \nsource /usr/local/bin/virtualenvwrapper.sh\n to your \n.bash_profile\n\n  or \n.bashrc\n. Alternatively, just run \nsource\n  /usr/local/bin/virtualenvwrapper.sh\n when you need it.\n\n\n\n\n\n\nUse VirtualWrapper to make a new virtual env:;\n\n\nmkvirtualenv --python=/usr/local/bin/python3 online-ratings-env\n\n\n\n\n\n\n\n\nGetting set up with Docker\n\n\nMac\n\n\nYou'll want to install \ndocker-compose\n and \ndocker-machine\n\n\n  $ brew install docker-compose docker-machine\n\n\n\n\nYou'll also want to have a virtual machine installed, such as VirtualBox. You can then set up a docker host on VirtualBox.\n\n\n  $ docker-machine create -d virtualbox dev\n\n\n\n\nThe output of the above command will tell you how to set the local environment variables to connect to your shiny new docker host.  For me, using fish shell, it's something like \neval (docker-machine env dev)\n\n\nLinux\n\n\nInstall \ndocker\n and \ndocker-compose\n\n\n[All]\n\n\nThen the following commands should start the app running and start tailing the logs.\n\n\n  $ cp .env_example .env\n  $ docker-compose -f docker-compose.dev.yml build\n  $ docker-compose -f docker-compose.dev.yml up -d\n  $ docker-compose -f docker-compose.dev.yml logs\n\n\n\n\nThe \nbuild\n step will create docker containers for each part of the app (nginx, flask, etc.). The \nup -d\n step will coordinate the running of all the containers as specified in the docker-compose yaml file.\n\n\nIf this is the first time you've set up the database, you'll need to create the initial tables with \n\n\n  $ docker-compose -f docker-compose.dev.yml run --rm web python /usr/src/app/create_db.py\n\n\n\n\nThe dockerfile configuration will then serve the app at [[virtual machine IP on localhost]], port 80. For example, http://192.168.99.100:80 You can find your docker hosts by running\n\n\n  $ docker-machine ls\n\n\n\n\nYou can remap the ports that the app listens on by editing \ndocker-compose.base.yml\n and changing the nginx ports mapping to something like \n\"8080:80\"\n\n\nDevelopment\n\n\nYou might find it useful to have a python shell in Docker. This lets you interactively play with database queries and such.\n\n\n  $ docker-compose -f docker-compose.dev.yml run --rm web python -i /usr/src/app/shell.py\n  \n from app.models import Player\n  \n print(Player.query.filter(Player.id==1).first())\n  Player FooPlayerKGS, id 1\n\n\n\n\nRunning locally, without Docker\n\n\nAssuming you have homebrew installed, and pip/virtualenv/virtualenvwrapper installed on the system python.\n\n\n  $ brew install python3\n  $ mkvirtualenv --python=/usr/local/bin/python3 \nenv name here\n\n  $ git clone https://github.com/usgo/online-ratings.git\n  $ cd online-ratings\n  $ pip install -r requirements.txt\n  $ python run.py\n\n\n\n\nRunning the Tests\n\n\nThe standard \nunittest\n module has a discovery feature that will automatically find and run tests.  The directions given below will search for tests in any file named \ntest_*.py\n.\n\n\n  $ source bin/activate\n  $ cd web\n  $ python -m unittest discover\n\n\n\n\nTo see other options for running tests, you may:\n\n\n  $ cd \nrepo root directory\n\n  $ python -m unittest --help\n\n\n\n\nDeploying\n\n\nDeploying should be the same as testing, except that the docker machine you use is on AWS, etc. Additionally, you should run docker-compose with the prod overrides:\n\n\n  $ vim .env (change passwords, secret_key to production values)\n  $ docker-compose -f docker-compose.prod.yml build\n  $ docker-compose -f docker-compose.prod.yml up -d\n\n\n\n\nQuestions?\n\n\nThe developer mail list can be found here:\nhttps://groups.google.com/forum/#!forum/usgo-online-ratings", 
             "title": "Home"
+        }, 
+        {
+            "location": "/#online-ratings", 
+            "text": "AGA Online Ratings protocol and implementation  The goal of the AGA Online Ratings Protocol is to provide Go Servers with a\nstandard way to report results between AGA members that happen on their servers\nto us for computing a cross-server rating.  Other goals of the project can be found on the  implementation plan here", 
+            "title": "Online Ratings"
+        }, 
+        {
+            "location": "/#using-the-api-go-server-implementers", 
+            "text": "All api endpoints accept and return JSON.\nAvailable endpoints:\n  -  POST /api/v1/games  Report a game result.\n  -  GET /api/v1/games/ game_id  Get a game result by ID\n  -  GET /api/v1/games/ game_id /sgf  Get a game's SGF file by ID\n  -  GET /api/v1/players/ player_id  Get a player by ID\n  -  GET /api/v1/players?token= token  Get a player by their secret token.  Here's an example request to create a game:  POST /api/v1/games\n  ?server_tok=secret_kgs\n   b_tok=player_1_token\n   w_tok=player_2_token\n{\n   black_id : 1,\n   white_id : 2,\n   game_server :  KGS ,\n  'rated': True,\n  'result': 'W+R',\n  'date_played': '2015-02-26T10:30:00',\n  'game_record': '(;FF[4]GM[1]SZ[19]CA[UTF-8]BC[ja]WC[ja]EV[54th Japanese Judan]PB[Kono Takashi]BR[8p]PW[O Meien]WR[9p]KM[6.5]DT[2015-02-26]RE[W+R];B[qd];W[dp];B[pq];W[od])'\n}  You can also submit a  game_url  in lieu of the  game_record  field. server_tok  is the game server's secret token, and  b_tok ,  w_tok  are the\nplayer's secret tokens.", 
+            "title": "Using the API (Go Server implementers)"
+        }, 
+        {
+            "location": "/#getting-started-online-ratings-backend-developers", 
+            "text": "", 
+            "title": "Getting Started (Online Ratings backend developers)"
+        }, 
+        {
+            "location": "/#overview", 
+            "text": "Before you get started working on Online Ratings, you'll need to do some setup:   Choose your package manager  Install Python3 and the relevant dependencies  Install the Docker command line tools.  Get set up with a VM to use with Docker  Build and run the app on the VM with Docker  log in using the fake login credentials found in  web/create_db.py", 
+            "title": "Overview"
+        }, 
+        {
+            "location": "/#package-managers", 
+            "text": "This dev guide assumes a POSIX tool chain. Most developers on this project use OSX.   OSX: Install  homebrew  Linux/Ubuntu: You should already apt-get installed", 
+            "title": "Package Managers"
+        }, 
+        {
+            "location": "/#python-and-dependencies", 
+            "text": "Install Python3  OSX:  brew install python3  Linux: You probably already have Python3 installed. If not:  sudo apt-get\n  install python3    Install  pip  curl https://bootstrap.pypa.io/get-pip.py | python3    Install postgres  OSX:  brew install postgresql  Linux:  See here    Install the python dependencies with pip.  cd to  online-ratings/web  directory and run:  pip install -r requirements.txt    Run the tests!  cd to  online-ratings/web  directory and run:  python3 -m unittest\n  discover     [Optional]  Optionally, you can install VirtualEnv, which makes working with python versions\na little easier.   Install Virtual Environment: mkvirtualenv  pip install virtualenvwrapper  Add  source /usr/local/bin/virtualenvwrapper.sh  to your  .bash_profile \n  or  .bashrc . Alternatively, just run  source\n  /usr/local/bin/virtualenvwrapper.sh  when you need it.    Use VirtualWrapper to make a new virtual env:;  mkvirtualenv --python=/usr/local/bin/python3 online-ratings-env", 
+            "title": "Python and Dependencies"
+        }, 
+        {
+            "location": "/#getting-set-up-with-docker", 
+            "text": "", 
+            "title": "Getting set up with Docker"
+        }, 
+        {
+            "location": "/#mac", 
+            "text": "You'll want to install  docker-compose  and  docker-machine    $ brew install docker-compose docker-machine  You'll also want to have a virtual machine installed, such as VirtualBox. You can then set up a docker host on VirtualBox.    $ docker-machine create -d virtualbox dev  The output of the above command will tell you how to set the local environment variables to connect to your shiny new docker host.  For me, using fish shell, it's something like  eval (docker-machine env dev)", 
+            "title": "Mac"
+        }, 
+        {
+            "location": "/#linux", 
+            "text": "Install  docker  and  docker-compose", 
+            "title": "Linux"
+        }, 
+        {
+            "location": "/#all", 
+            "text": "Then the following commands should start the app running and start tailing the logs.    $ cp .env_example .env\n  $ docker-compose -f docker-compose.dev.yml build\n  $ docker-compose -f docker-compose.dev.yml up -d\n  $ docker-compose -f docker-compose.dev.yml logs  The  build  step will create docker containers for each part of the app (nginx, flask, etc.). The  up -d  step will coordinate the running of all the containers as specified in the docker-compose yaml file.  If this is the first time you've set up the database, you'll need to create the initial tables with     $ docker-compose -f docker-compose.dev.yml run --rm web python /usr/src/app/create_db.py  The dockerfile configuration will then serve the app at [[virtual machine IP on localhost]], port 80. For example, http://192.168.99.100:80 You can find your docker hosts by running    $ docker-machine ls  You can remap the ports that the app listens on by editing  docker-compose.base.yml  and changing the nginx ports mapping to something like  \"8080:80\"", 
+            "title": "[All]"
+        }, 
+        {
+            "location": "/#development", 
+            "text": "You might find it useful to have a python shell in Docker. This lets you interactively play with database queries and such.    $ docker-compose -f docker-compose.dev.yml run --rm web python -i /usr/src/app/shell.py\n    from app.models import Player\n    print(Player.query.filter(Player.id==1).first())\n  Player FooPlayerKGS, id 1", 
+            "title": "Development"
+        }, 
+        {
+            "location": "/#running-locally-without-docker", 
+            "text": "Assuming you have homebrew installed, and pip/virtualenv/virtualenvwrapper installed on the system python.    $ brew install python3\n  $ mkvirtualenv --python=/usr/local/bin/python3  env name here \n  $ git clone https://github.com/usgo/online-ratings.git\n  $ cd online-ratings\n  $ pip install -r requirements.txt\n  $ python run.py", 
+            "title": "Running locally, without Docker"
+        }, 
+        {
+            "location": "/#running-the-tests", 
+            "text": "The standard  unittest  module has a discovery feature that will automatically find and run tests.  The directions given below will search for tests in any file named  test_*.py .    $ source bin/activate\n  $ cd web\n  $ python -m unittest discover  To see other options for running tests, you may:    $ cd  repo root directory \n  $ python -m unittest --help", 
+            "title": "Running the Tests"
+        }, 
+        {
+            "location": "/#deploying", 
+            "text": "Deploying should be the same as testing, except that the docker machine you use is on AWS, etc. Additionally, you should run docker-compose with the prod overrides:    $ vim .env (change passwords, secret_key to production values)\n  $ docker-compose -f docker-compose.prod.yml build\n  $ docker-compose -f docker-compose.prod.yml up -d", 
+            "title": "Deploying"
+        }, 
+        {
+            "location": "/#questions", 
+            "text": "The developer mail list can be found here:\nhttps://groups.google.com/forum/#!forum/usgo-online-ratings", 
+            "title": "Questions?"
+        }, 
+        {
+            "location": "/documentation/", 
+            "text": "Getting Started\n\n\n\n\nEnsure \nmkdocs\n is installed.\n\n\nRun \nmkdocs serve\n from within the root of \nonline-ratings\n.\n\n\nLoad it in a browser and profit!\n\n\n\n\nMaking non-API Pages\n\n\nCreate or edit the \n.md\n files within \ndocs/\n.\n\n\nRefer to \nmkdocs\n for more details.\n\n\nGenerating API Documentation\n\n\nSource files to be edited can be found in \ndocs/schemata\n.  The files are in \nYAML\n for improved\nreadability.\n\n\n\n\nInstall \nprmd\n per their instructions.\n\n\nFrom root of \nonline-ratings\n, run\n   \nprmd combine --meta docs/meta.yml --output docs/schema.json docs/schemata\n\n\nFrom root of \nonline-ratings\n, run \nprmd doc --output docs/api.md docs/schema.json\n\n\n\n\nJSON Schema\n is the general format used for types and \nJSON Hyper-Schema\n is used for\nendpoint definitions.\n\n\nDeploying\n\n\n\n\nRun \nmkdocs gh-deploy --clean\n.\n\n\nThat's it!", 
+            "title": "Documentation"
+        }, 
+        {
+            "location": "/documentation/#getting-started", 
+            "text": "Ensure  mkdocs  is installed.  Run  mkdocs serve  from within the root of  online-ratings .  Load it in a browser and profit!", 
+            "title": "Getting Started"
+        }, 
+        {
+            "location": "/documentation/#making-non-api-pages", 
+            "text": "Create or edit the  .md  files within  docs/ .  Refer to  mkdocs  for more details.", 
+            "title": "Making non-API Pages"
+        }, 
+        {
+            "location": "/documentation/#generating-api-documentation", 
+            "text": "Source files to be edited can be found in  docs/schemata .  The files are in  YAML  for improved\nreadability.   Install  prmd  per their instructions.  From root of  online-ratings , run\n    prmd combine --meta docs/meta.yml --output docs/schema.json docs/schemata  From root of  online-ratings , run  prmd doc --output docs/api.md docs/schema.json   JSON Schema  is the general format used for types and  JSON Hyper-Schema  is used for\nendpoint definitions.", 
+            "title": "Generating API Documentation"
+        }, 
+        {
+            "location": "/documentation/#deploying", 
+            "text": "Run  mkdocs gh-deploy --clean .  That's it!", 
+            "title": "Deploying"
+        }, 
+        {
+            "location": "/api/", 
+            "text": "Game\n\n\nLoosely based off the example in the README\n\n\nAttributes\n\n\n\n\n\n\n\n\nName\n\n\nType\n\n\nDescription\n\n\nExample\n\n\n\n\n\n\n\n\n\n\nblack_id\n\n\nnumber\n\n\nthis could be a uuid to make it db agnostic\n\n\n42.0\n\n\n\n\n\n\ndate_played\n\n\ndate-time\n\n\n\n\n\"2015-01-01T12:00:00Z\"\n\n\n\n\n\n\ngame_record\n\n\nstring\n\n\n\n\n\"\nraw sgf string\n\"\n\n\n\n\n\n\ngame_server\n\n\nstring\n\n\n\n\n\"KGS\"\n\n\n\n\n\n\nrated\n\n\nboolean\n\n\n\n\ntrue\n\n\n\n\n\n\nwhite_id\n\n\nnumber\n\n\nthis could be a uuid to make it db agnostic\n\n\n42.0\n\n\n\n\n\n\n\n\nPlayer\n\n\nI copied the database table here, didn't document any endpoints here.\n\n\nAttributes\n\n\n\n\n\n\n\n\nName\n\n\nType\n\n\nDescription\n\n\nExample\n\n\n\n\n\n\n\n\n\n\nid\n\n\nnumber\n\n\nthis could be a uuid to make it db agnostic\n\n\n42.0\n\n\n\n\n\n\nname\n\n\nstring\n\n\nshould this be expanded to first_name, last_name?\n\n\n\"example\"\n\n\n\n\n\n\nserver_id\n\n\nnumber\n\n\nnot sure if this should be exposed, im just copying the table definition\n\n\n42.0\n\n\n\n\n\n\ntoken\n\n\nuuid\n\n\nim totally guessing that this is a uuid\n\n\n\"01234567-89ab-cdef-0123-456789abcdef\"", 
+            "title": "API"
+        }, 
+        {
+            "location": "/api/#game", 
+            "text": "Loosely based off the example in the README", 
+            "title": "Game"
+        }, 
+        {
+            "location": "/api/#attributes", 
+            "text": "Name  Type  Description  Example      black_id  number  this could be a uuid to make it db agnostic  42.0    date_played  date-time   \"2015-01-01T12:00:00Z\"    game_record  string   \" raw sgf string \"    game_server  string   \"KGS\"    rated  boolean   true    white_id  number  this could be a uuid to make it db agnostic  42.0", 
+            "title": "Attributes"
+        }, 
+        {
+            "location": "/api/#player", 
+            "text": "I copied the database table here, didn't document any endpoints here.", 
+            "title": "Player"
+        }, 
+        {
+            "location": "/api/#attributes_1", 
+            "text": "Name  Type  Description  Example      id  number  this could be a uuid to make it db agnostic  42.0    name  string  should this be expanded to first_name, last_name?  \"example\"    server_id  number  not sure if this should be exposed, im just copying the table definition  42.0    token  uuid  im totally guessing that this is a uuid  \"01234567-89ab-cdef-0123-456789abcdef\"", 
+            "title": "Attributes"
         }
     ]
 }

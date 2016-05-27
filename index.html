@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="./css/theme.css" type="text/css" />
   <link rel="stylesheet" href="./css/theme_extra.css" type="text/css" />
   <link rel="stylesheet" href="./css/highlight.css">
+  <link href="./overrides.css" rel="stylesheet">
 
   
   <script>
@@ -60,7 +61,44 @@
         
             <ul>
             
+                <li class="toctree-l3"><a href="#online-ratings">Online Ratings</a></li>
+                
+                    <li><a class="toctree-l4" href="#using-the-api-go-server-implementers">Using the API (Go Server implementers)</a></li>
+                
+                    <li><a class="toctree-l4" href="#getting-started-online-ratings-backend-developers">Getting Started (Online Ratings backend developers)</a></li>
+                
+                    <li><a class="toctree-l4" href="#package-managers">Package Managers</a></li>
+                
+                    <li><a class="toctree-l4" href="#python-and-dependencies">Python and Dependencies</a></li>
+                
+                    <li><a class="toctree-l4" href="#getting-set-up-with-docker">Getting set up with Docker</a></li>
+                
+                    <li><a class="toctree-l4" href="#development">Development</a></li>
+                
+                    <li><a class="toctree-l4" href="#running-locally-without-docker">Running locally, without Docker</a></li>
+                
+                    <li><a class="toctree-l4" href="#running-the-tests">Running the Tests</a></li>
+                
+                    <li><a class="toctree-l4" href="#deploying">Deploying</a></li>
+                
+                    <li><a class="toctree-l4" href="#questions">Questions?</a></li>
+                
+            
             </ul>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="documentation/">Documentation</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="api/">API</a>
         
     </li>
 <li>
@@ -97,11 +135,182 @@
           <div role="main">
             <div class="section">
               
-                
+                <h1 id="online-ratings">Online Ratings</h1>
+<p><a href="https://travis-ci.org/usgo/online-ratings"><img alt="Travis Build Status" src="https://travis-ci.org/usgo/online-ratings.svg?branch=master" /></a></p>
+<p>AGA Online Ratings protocol and implementation</p>
+<p>The goal of the AGA Online Ratings Protocol is to provide Go Servers with a
+standard way to report results between AGA members that happen on their servers
+to us for computing a cross-server rating.</p>
+<p>Other goals of the project can be found on the <a href="https://docs.google.com/document/d/1XOcpprw0Y8xhHTroYnUU7tt0rN6F3-T4_9sgOeifqwI">implementation plan here</a></p>
+<h2 id="using-the-api-go-server-implementers">Using the API (Go Server implementers)</h2>
+<p>All api endpoints accept and return JSON.
+Available endpoints:
+  - <code>POST /api/v1/games</code> Report a game result.
+  - <code>GET /api/v1/games/&lt;game_id&gt;</code> Get a game result by ID
+  - <code>GET /api/v1/games/&lt;game_id&gt;/sgf</code> Get a game's SGF file by ID
+  - <code>GET /api/v1/players/&lt;player_id&gt;</code> Get a player by ID
+  - <code>GET /api/v1/players?token=&lt;token&gt;</code> Get a player by their secret token.</p>
+<p>Here's an example request to create a game:</p>
+<pre><code>POST /api/v1/games
+  ?server_tok=secret_kgs
+  &amp;b_tok=player_1_token
+  &amp;w_tok=player_2_token
+{
+  &quot;black_id&quot;: 1,
+  &quot;white_id&quot;: 2,
+  &quot;game_server&quot;: &quot;KGS&quot;,
+  'rated': True,
+  'result': 'W+R',
+  'date_played': '2015-02-26T10:30:00',
+  'game_record': '(;FF[4]GM[1]SZ[19]CA[UTF-8]BC[ja]WC[ja]EV[54th Japanese Judan]PB[Kono Takashi]BR[8p]PW[O Meien]WR[9p]KM[6.5]DT[2015-02-26]RE[W+R];B[qd];W[dp];B[pq];W[od])'
+}
+</code></pre>
+
+<p>You can also submit a <code>game_url</code> in lieu of the <code>game_record</code> field.
+<code>server_tok</code> is the game server's secret token, and <code>b_tok</code>, <code>w_tok</code> are the
+player's secret tokens. </p>
+<h2 id="getting-started-online-ratings-backend-developers">Getting Started (Online Ratings backend developers)</h2>
+<h3 id="overview">Overview</h3>
+<p>Before you get started working on Online Ratings, you'll need to do some setup:</p>
+<ul>
+<li>Choose your package manager</li>
+<li>Install Python3 and the relevant dependencies</li>
+<li>Install the Docker command line tools.</li>
+<li>Get set up with a VM to use with Docker</li>
+<li>Build and run the app on the VM with Docker</li>
+<li>log in using the fake login credentials found in <code>web/create_db.py</code></li>
+</ul>
+<h2 id="package-managers">Package Managers</h2>
+<p>This dev guide assumes a POSIX tool chain. Most developers on this project use OSX.</p>
+<ul>
+<li>OSX: Install <a href="http://brew.sh/">homebrew</a></li>
+<li>Linux/Ubuntu: You should already apt-get installed</li>
+</ul>
+<h2 id="python-and-dependencies">Python and Dependencies</h2>
+<ol>
+<li>Install Python3<ul>
+<li>OSX: <code>brew install python3</code></li>
+<li>Linux: You probably already have Python3 installed. If not: <code>sudo apt-get
+  install python3</code></li>
+</ul>
+</li>
+<li>Install <a href="https://en.wikipedia.org/wiki/Pip_(package_manager)">pip</a><ul>
+<li><code>curl https://bootstrap.pypa.io/get-pip.py | python3</code></li>
+</ul>
+</li>
+<li>Install postgres<ul>
+<li>OSX: <code>brew install postgresql</code></li>
+<li>Linux: <a href="https://www.postgresql.org/download/linux/ubuntu/">See here</a></li>
+</ul>
+</li>
+<li>Install the python dependencies with pip.<ul>
+<li>cd to <code>online-ratings/web</code> directory and run: <code>pip install -r requirements.txt</code></li>
+</ul>
+</li>
+<li>Run the tests!<ul>
+<li>cd to <code>online-ratings/web</code> directory and run: <code>python3 -m unittest
+  discover</code></li>
+</ul>
+</li>
+</ol>
+<p><strong>[Optional]</strong></p>
+<p>Optionally, you can install VirtualEnv, which makes working with python versions
+a little easier.</p>
+<ol>
+<li>Install Virtual Environment: mkvirtualenv<ul>
+<li><code>pip install virtualenvwrapper</code></li>
+<li>Add <code>source /usr/local/bin/virtualenvwrapper.sh</code> to your <code>.bash_profile</code>
+  or <code>.bashrc</code>. Alternatively, just run <code>source
+  /usr/local/bin/virtualenvwrapper.sh</code> when you need it.</li>
+</ul>
+</li>
+<li>Use VirtualWrapper to make a new virtual env:;<ul>
+<li><code>mkvirtualenv --python=/usr/local/bin/python3 online-ratings-env</code></li>
+</ul>
+</li>
+</ol>
+<h2 id="getting-set-up-with-docker">Getting set up with Docker</h2>
+<h3 id="mac">Mac</h3>
+<p>You'll want to install <code>docker-compose</code> and <code>docker-machine</code></p>
+<pre><code>  $ brew install docker-compose docker-machine
+</code></pre>
+
+<p>You'll also want to have a virtual machine installed, such as VirtualBox. You can then set up a docker host on VirtualBox.</p>
+<pre><code>  $ docker-machine create -d virtualbox dev
+</code></pre>
+
+<p>The output of the above command will tell you how to set the local environment variables to connect to your shiny new docker host.  For me, using fish shell, it's something like <code>eval (docker-machine env dev)</code></p>
+<h3 id="linux">Linux</h3>
+<p>Install <a href="https://docs.docker.com/engine/installation/">docker</a> and <a href="https://docs.docker.com/compose/install/">docker-compose</a></p>
+<h3 id="all">[All]</h3>
+<p>Then the following commands should start the app running and start tailing the logs.</p>
+<pre><code class="shell">  $ cp .env_example .env
+  $ docker-compose -f docker-compose.dev.yml build
+  $ docker-compose -f docker-compose.dev.yml up -d
+  $ docker-compose -f docker-compose.dev.yml logs
+</code></pre>
+
+<p>The <code>build</code> step will create docker containers for each part of the app (nginx, flask, etc.). The <code>up -d</code> step will coordinate the running of all the containers as specified in the docker-compose yaml file.</p>
+<p>If this is the first time you've set up the database, you'll need to create the initial tables with </p>
+<pre><code>  $ docker-compose -f docker-compose.dev.yml run --rm web python /usr/src/app/create_db.py
+</code></pre>
+
+<p>The dockerfile configuration will then serve the app at [[virtual machine IP on localhost]], port 80. For example, http://192.168.99.100:80 You can find your docker hosts by running</p>
+<pre><code>  $ docker-machine ls
+</code></pre>
+
+<p>You can remap the ports that the app listens on by editing <code>docker-compose.base.yml</code> and changing the nginx ports mapping to something like <code>"8080:80"</code></p>
+<h2 id="development">Development</h2>
+<p>You might find it useful to have a python shell in Docker. This lets you interactively play with database queries and such.</p>
+<pre><code>  $ docker-compose -f docker-compose.dev.yml run --rm web python -i /usr/src/app/shell.py
+  &gt;&gt;&gt; from app.models import Player
+  &gt;&gt;&gt; print(Player.query.filter(Player.id==1).first())
+  Player FooPlayerKGS, id 1
+</code></pre>
+
+<h2 id="running-locally-without-docker">Running locally, without Docker</h2>
+<p>Assuming you have homebrew installed, and pip/virtualenv/virtualenvwrapper installed on the system python.</p>
+<pre><code>  $ brew install python3
+  $ mkvirtualenv --python=/usr/local/bin/python3 &lt;env name here&gt;
+  $ git clone https://github.com/usgo/online-ratings.git
+  $ cd online-ratings
+  $ pip install -r requirements.txt
+  $ python run.py
+</code></pre>
+
+<h2 id="running-the-tests">Running the Tests</h2>
+<p>The standard <code>unittest</code> module has a discovery feature that will automatically find and run tests.  The directions given below will search for tests in any file named <code>test_*.py</code>.</p>
+<pre><code>  $ source bin/activate
+  $ cd web
+  $ python -m unittest discover
+</code></pre>
+
+<p>To see other options for running tests, you may:</p>
+<pre><code>  $ cd &lt;repo root directory&gt;
+  $ python -m unittest --help
+</code></pre>
+
+<h2 id="deploying">Deploying</h2>
+<p>Deploying should be the same as testing, except that the docker machine you use is on AWS, etc. Additionally, you should run docker-compose with the prod overrides:</p>
+<pre><code>  $ vim .env (change passwords, secret_key to production values)
+  $ docker-compose -f docker-compose.prod.yml build
+  $ docker-compose -f docker-compose.prod.yml up -d
+</code></pre>
+
+<h2 id="questions">Questions?</h2>
+<p>The developer mail list can be found here:
+https://groups.google.com/forum/#!forum/usgo-online-ratings</p>
               
             </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="documentation/" class="btn btn-neutral float-right" title="Documentation">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+    </div>
   
 
   <hr/>
@@ -126,6 +335,8 @@
       
       
       
+        <span style="margin-left: 15px"><a href="documentation/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
     </span>
 </div>
 
@@ -134,5 +345,5 @@
 
 <!--
 MkDocs version : 0.15.3
-Build Date UTC : 2016-05-27 06:41:12.163558
+Build Date UTC : 2016-05-27 07:29:03.488817
 -->
