@@ -72,10 +72,16 @@
                 
                     <li><a class="toctree-l4" href="#attributes">Attributes</a></li>
                 
+                    <li><a class="toctree-l4" href="#game-creation">Game Creation</a></li>
+                
+                    <li><a class="toctree-l4" href="#game-read">Game Read</a></li>
+                
             
                 <li class="toctree-l3"><a href="#player">Player</a></li>
                 
                     <li><a class="toctree-l4" href="#attributes_1">Attributes</a></li>
+                
+                    <li><a class="toctree-l4" href="#player-read">Player Read</a></li>
                 
             
             </ul>
@@ -131,43 +137,174 @@
 <tr>
 <td><strong><a href="#resource-player">black_id</a></strong></td>
 <td><em>number</em></td>
-<td>this could be a uuid to make it db agnostic</td>
+<td>black player's id</td>
 <td><code>42.0</code></td>
 </tr>
 <tr>
 <td><strong>date_played</strong></td>
 <td><em>date-time</em></td>
-<td></td>
+<td>time the game was played</td>
 <td><code>"2015-01-01T12:00:00Z"</code></td>
 </tr>
 <tr>
 <td><strong>game_record</strong></td>
 <td><em>string</em></td>
-<td></td>
+<td>game record in SGF</td>
 <td><code>"&lt;raw sgf string&gt;"</code></td>
 </tr>
 <tr>
 <td><strong>game_server</strong></td>
 <td><em>string</em></td>
-<td></td>
+<td>game server id</td>
 <td><code>"KGS"</code></td>
+</tr>
+<tr>
+<td><strong>id</strong></td>
+<td><em>number</em></td>
+<td>this could be a uuid to make it db agnostic</td>
+<td><code>42.0</code></td>
 </tr>
 <tr>
 <td><strong>rated</strong></td>
 <td><em>boolean</em></td>
-<td></td>
+<td>whether this was a rated game (on the server?)</td>
 <td><code>true</code></td>
 </tr>
 <tr>
 <td><strong><a href="#resource-player">white_id</a></strong></td>
 <td><em>number</em></td>
-<td>this could be a uuid to make it db agnostic</td>
+<td>white player's id</td>
 <td><code>42.0</code></td>
 </tr>
 </tbody>
 </table>
+<h3 id="game-creation">Game Creation</h3>
+<p>Report a game result</p>
+<pre><code>POST /api/v1/games
+</code></pre>
+
+<h4 id="required-parameters">Required Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>auth:black_token</strong></td>
+<td><em>uuid</em></td>
+<td>secret token for black player</td>
+<td><code>"01234567-89ab-cdef-0123-456789abcdef"</code></td>
+</tr>
+<tr>
+<td><strong>auth:server_token</strong></td>
+<td><em>uuid</em></td>
+<td>secret server token</td>
+<td><code>"01234567-89ab-cdef-0123-456789abcdef"</code></td>
+</tr>
+<tr>
+<td><strong>auth:white_token</strong></td>
+<td><em>uuid</em></td>
+<td>secret token for white player</td>
+<td><code>"01234567-89ab-cdef-0123-456789abcdef"</code></td>
+</tr>
+<tr>
+<td><strong>game:black_id</strong></td>
+<td><em>number</em></td>
+<td>black player's id</td>
+<td><code>42.0</code></td>
+</tr>
+<tr>
+<td><strong>game:date_played</strong></td>
+<td><em>date-time</em></td>
+<td>time the game was played</td>
+<td><code>"2015-01-01T12:00:00Z"</code></td>
+</tr>
+<tr>
+<td><strong>game:game_record</strong></td>
+<td><em>string</em></td>
+<td>game record in SGF</td>
+<td><code>"&lt;raw sgf string&gt;"</code></td>
+</tr>
+<tr>
+<td><strong>game:game_server</strong></td>
+<td><em>string</em></td>
+<td>game server id</td>
+<td><code>"KGS"</code></td>
+</tr>
+<tr>
+<td><strong>game:rated</strong></td>
+<td><em>boolean</em></td>
+<td>whether this was a rated game (on the server?)</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><strong>game:white_id</strong></td>
+<td><em>number</em></td>
+<td>white player's id</td>
+<td><code>42.0</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="curl-example">Curl Example</h4>
+<pre><code class="bash">$ curl -n -X POST http://dev.usgo.org/api/v1/games \
+  -d '{
+  &quot;game&quot;: {
+    &quot;black_id&quot;: 42.0,
+    &quot;white_id&quot;: 42.0,
+    &quot;game_server&quot;: &quot;KGS&quot;,
+    &quot;rated&quot;: true,
+    &quot;date_played&quot;: &quot;2015-01-01T12:00:00Z&quot;,
+    &quot;game_record&quot;: &quot;&lt;raw sgf string&gt;&quot;
+  },
+  &quot;auth&quot;: {
+    &quot;server_token&quot;: &quot;01234567-89ab-cdef-0123-456789abcdef&quot;,
+    &quot;black_token&quot;: &quot;01234567-89ab-cdef-0123-456789abcdef&quot;,
+    &quot;white_token&quot;: &quot;01234567-89ab-cdef-0123-456789abcdef&quot;
+  }
+}' \
+  -H &quot;Content-Type: application/json&quot;
+</code></pre>
+
+<h4 id="response-example">Response Example</h4>
+<pre><code>HTTP/1.1 201 Created
+</code></pre>
+
+<pre><code class="json">{
+  &quot;id&quot;: 42.0
+}
+</code></pre>
+
+<h3 id="game-read">Game Read</h3>
+<p>Get a game result by id</p>
+<pre><code>GET /api/v1/games/{game_id}
+</code></pre>
+
+<h4 id="curl-example_1">Curl Example</h4>
+<pre><code class="bash">$ curl -n http://dev.usgo.org/api/v1/games/$GAME_ID
+</code></pre>
+
+<h4 id="response-example_1">Response Example</h4>
+<pre><code>HTTP/1.1 200 OK
+</code></pre>
+
+<pre><code class="json">{
+  &quot;id&quot;: 42.0,
+  &quot;black_id&quot;: 42.0,
+  &quot;white_id&quot;: 42.0,
+  &quot;game_server&quot;: &quot;KGS&quot;,
+  &quot;rated&quot;: true,
+  &quot;date_played&quot;: &quot;2015-01-01T12:00:00Z&quot;,
+  &quot;game_record&quot;: &quot;&lt;raw sgf string&gt;&quot;
+}
+</code></pre>
+
 <h2 id="player"><a name="resource-player">Player</a></h2>
-<p>I copied the database table here, didn't document any endpoints here.</p>
+<p>I copied the database table here.</p>
 <h3 id="attributes_1">Attributes</h3>
 <table>
 <thead>
@@ -205,6 +342,26 @@
 </tr>
 </tbody>
 </table>
+<h3 id="player-read">Player Read</h3>
+<p>Get a player by id</p>
+<pre><code>GET /api/v1/players/{player_id}
+</code></pre>
+
+<h4 id="curl-example_2">Curl Example</h4>
+<pre><code class="bash">$ curl -n http://dev.usgo.org/api/v1/players/$PLAYER_ID
+</code></pre>
+
+<h4 id="response-example_2">Response Example</h4>
+<pre><code>HTTP/1.1 200 OK
+</code></pre>
+
+<pre><code class="json">{
+  &quot;id&quot;: 42.0,
+  &quot;name&quot;: &quot;example&quot;,
+  &quot;server_id&quot;: 42.0,
+  &quot;token&quot;: &quot;01234567-89ab-cdef-0123-456789abcdef&quot;
+}
+</code></pre>
               
             </div>
           </div>

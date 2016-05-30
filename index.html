@@ -226,15 +226,21 @@ a little easier.</p>
 </ol>
 <h2 id="getting-set-up-with-docker">Getting set up with Docker</h2>
 <h3 id="mac">Mac</h3>
-<p>You'll want to install <code>docker-compose</code> and <code>docker-machine</code></p>
-<pre><code>  $ brew install docker-compose docker-machine
+<p>You'll want to install <code>docker</code>, <code>docker-compose</code>, and <code>docker-machine</code></p>
+<pre><code class="shell">$ brew install docker docker-compose docker-machine
 </code></pre>
 
-<p>You'll also want to have a virtual machine installed, such as VirtualBox. You can then set up a docker host on VirtualBox.</p>
-<pre><code>  $ docker-machine create -d virtualbox dev
+<p>You'll also want to have a virtual machine installed, such as VirtualBox. </p>
+<pre><code class="shell">$ brew cask install virtualbox
 </code></pre>
 
-<p>The output of the above command will tell you how to set the local environment variables to connect to your shiny new docker host.  For me, using fish shell, it's something like <code>eval (docker-machine env dev)</code></p>
+<p>You can then set up a docker host on VirtualBox.</p>
+<pre><code class="shell">$ docker-machine create -d virtualbox dev
+</code></pre>
+
+<p>The output of the above command will tell you how to set the local environment
+variables to connect to your shiny new docker host.  For me, using fish shell,
+it's something like <code>eval (docker-machine env dev)</code></p>
 <h3 id="linux">Linux</h3>
 <p>Install <a href="https://docs.docker.com/engine/installation/">docker</a> and <a href="https://docs.docker.com/compose/install/">docker-compose</a></p>
 <h3 id="all">[All]</h3>
@@ -245,12 +251,16 @@ a little easier.</p>
   $ docker-compose -f docker-compose.dev.yml logs
 </code></pre>
 
-<p>The <code>build</code> step will create docker containers for each part of the app (nginx, flask, etc.). The <code>up -d</code> step will coordinate the running of all the containers as specified in the docker-compose yaml file.</p>
+<p>The <code>build</code> step will create docker containers for each part of the app (nginx,
+flask, etc.). The <code>up -d</code> step will coordinate the running of all the containers
+as specified in the docker-compose yaml file.</p>
 <p>If this is the first time you've set up the database, you'll need to create the initial tables with </p>
 <pre><code>  $ docker-compose -f docker-compose.dev.yml run --rm web python /usr/src/app/create_db.py
 </code></pre>
 
-<p>The dockerfile configuration will then serve the app at [[virtual machine IP on localhost]], port 80. For example, http://192.168.99.100:80 You can find your docker hosts by running</p>
+<p>The dockerfile configuration will then serve the app at [[virtual machine IP on
+localhost]], port 80. For example, http://192.168.99.100:80 You can find your
+docker hosts by running</p>
 <pre><code>  $ docker-machine ls
 </code></pre>
 
@@ -366,5 +376,5 @@ https://groups.google.com/forum/#!forum/usgo-online-ratings</p>
 
 <!--
 MkDocs version : 0.15.3
-Build Date UTC : 2016-05-28 01:38:06.144216
+Build Date UTC : 2016-05-30 05:49:20.797775
 -->
