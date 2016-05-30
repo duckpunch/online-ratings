@@ -136,9 +136,9 @@
 <tbody>
 <tr>
 <td><strong><a href="#resource-player">black_id</a></strong></td>
-<td><em>number</em></td>
+<td><em>integer</em></td>
 <td>black player's id</td>
-<td><code>42.0</code></td>
+<td><code>42</code></td>
 </tr>
 <tr>
 <td><strong>date_played</strong></td>
@@ -160,9 +160,9 @@
 </tr>
 <tr>
 <td><strong>id</strong></td>
-<td><em>number</em></td>
+<td><em>integer</em></td>
 <td>this could be a uuid to make it db agnostic</td>
-<td><code>42.0</code></td>
+<td><code>42</code></td>
 </tr>
 <tr>
 <td><strong>rated</strong></td>
@@ -172,9 +172,9 @@
 </tr>
 <tr>
 <td><strong><a href="#resource-player">white_id</a></strong></td>
-<td><em>number</em></td>
+<td><em>integer</em></td>
 <td>white player's id</td>
-<td><code>42.0</code></td>
+<td><code>42</code></td>
 </tr>
 </tbody>
 </table>
@@ -195,79 +195,57 @@
 </thead>
 <tbody>
 <tr>
-<td><strong>auth:black_token</strong></td>
-<td><em>uuid</em></td>
-<td>secret token for black player</td>
-<td><code>"01234567-89ab-cdef-0123-456789abcdef"</code></td>
-</tr>
-<tr>
-<td><strong>auth:server_token</strong></td>
-<td><em>uuid</em></td>
-<td>secret server token</td>
-<td><code>"01234567-89ab-cdef-0123-456789abcdef"</code></td>
-</tr>
-<tr>
-<td><strong>auth:white_token</strong></td>
-<td><em>uuid</em></td>
-<td>secret token for white player</td>
-<td><code>"01234567-89ab-cdef-0123-456789abcdef"</code></td>
-</tr>
-<tr>
-<td><strong>game:black_id</strong></td>
-<td><em>number</em></td>
+<td><strong>black_id</strong></td>
+<td><em>integer</em></td>
 <td>black player's id</td>
-<td><code>42.0</code></td>
+<td><code>42</code></td>
 </tr>
 <tr>
-<td><strong>game:date_played</strong></td>
+<td><strong>date_played</strong></td>
 <td><em>date-time</em></td>
 <td>time the game was played</td>
 <td><code>"2015-01-01T12:00:00Z"</code></td>
 </tr>
 <tr>
-<td><strong>game:game_record</strong></td>
+<td><strong>game_record</strong></td>
 <td><em>string</em></td>
 <td>game record in SGF</td>
 <td><code>"&lt;raw sgf string&gt;"</code></td>
 </tr>
 <tr>
-<td><strong>game:game_server</strong></td>
+<td><strong>game_server</strong></td>
 <td><em>string</em></td>
 <td>game server id</td>
 <td><code>"KGS"</code></td>
 </tr>
 <tr>
-<td><strong>game:rated</strong></td>
+<td><strong>rated</strong></td>
 <td><em>boolean</em></td>
 <td>whether this was a rated game (on the server?)</td>
 <td><code>true</code></td>
 </tr>
 <tr>
-<td><strong>game:white_id</strong></td>
-<td><em>number</em></td>
+<td><strong>white_id</strong></td>
+<td><em>integer</em></td>
 <td>white player's id</td>
-<td><code>42.0</code></td>
+<td><code>42</code></td>
 </tr>
 </tbody>
 </table>
 <h4 id="curl-example">Curl Example</h4>
 <pre><code class="bash">$ curl -n -X POST http://dev.usgo.org/api/v1/games \
   -d '{
-  &quot;game&quot;: {
-    &quot;black_id&quot;: 42.0,
-    &quot;white_id&quot;: 42.0,
-    &quot;game_server&quot;: &quot;KGS&quot;,
-    &quot;rated&quot;: true,
-    &quot;date_played&quot;: &quot;2015-01-01T12:00:00Z&quot;,
-    &quot;game_record&quot;: &quot;&lt;raw sgf string&gt;&quot;
-  },
-  &quot;auth&quot;: {
-    &quot;server_token&quot;: &quot;01234567-89ab-cdef-0123-456789abcdef&quot;,
-    &quot;black_token&quot;: &quot;01234567-89ab-cdef-0123-456789abcdef&quot;,
-    &quot;white_token&quot;: &quot;01234567-89ab-cdef-0123-456789abcdef&quot;
-  }
+  &quot;black_id&quot;: 42,
+  &quot;white_id&quot;: 42,
+  &quot;game_server&quot;: &quot;KGS&quot;,
+  &quot;rated&quot;: true,
+  &quot;date_played&quot;: &quot;2015-01-01T12:00:00Z&quot;,
+  &quot;game_record&quot;: &quot;&lt;raw sgf string&gt;&quot;
 }' \
-  -H &quot;Content-Type: application/json&quot;
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;X-Auth-Server-Token: &lt;secret server token&gt;&quot; \
+  -H &quot;X-Auth-Black-Player-Token: &lt;secret token for black player&gt;&quot; \
+  -H &quot;X-Auth-White-Player-Token: &lt;secret token for white player&gt;&quot;
 </code></pre>
 
 <h4 id="response-example">Response Example</h4>
@@ -275,7 +253,7 @@
 </code></pre>
 
 <pre><code class="json">{
-  &quot;id&quot;: 42.0
+  &quot;id&quot;: 42
 }
 </code></pre>
 
@@ -293,9 +271,9 @@
 </code></pre>
 
 <pre><code class="json">{
-  &quot;id&quot;: 42.0,
-  &quot;black_id&quot;: 42.0,
-  &quot;white_id&quot;: 42.0,
+  &quot;id&quot;: 42,
+  &quot;black_id&quot;: 42,
+  &quot;white_id&quot;: 42,
   &quot;game_server&quot;: &quot;KGS&quot;,
   &quot;rated&quot;: true,
   &quot;date_played&quot;: &quot;2015-01-01T12:00:00Z&quot;,
@@ -318,9 +296,9 @@
 <tbody>
 <tr>
 <td><strong>id</strong></td>
-<td><em>number</em></td>
+<td><em>integer</em></td>
 <td>this could be a uuid to make it db agnostic</td>
-<td><code>42.0</code></td>
+<td><code>42</code></td>
 </tr>
 <tr>
 <td><strong>name</strong></td>
@@ -356,7 +334,7 @@
 </code></pre>
 
 <pre><code class="json">{
-  &quot;id&quot;: 42.0,
+  &quot;id&quot;: 42,
   &quot;name&quot;: &quot;example&quot;,
   &quot;server_id&quot;: 42.0,
   &quot;token&quot;: &quot;01234567-89ab-cdef-0123-456789abcdef&quot;
