@@ -318,8 +318,7 @@ readability.</p>
 <ol>
 <li>Install <a href="https://github.com/interagent/prmd">prmd</a> per their instructions.</li>
 <li>From root of <code>online-ratings</code>, run
-   <code>prmd combine --meta docs/meta.yml --output docs/schema.json docs/schemata</code></li>
-<li>From root of <code>online-ratings</code>, run <code>prmd doc --output docs/api.md docs/schema.json</code></li>
+   <code>prmd combine --meta docs/meta.yml docs/schemata | prmd verify | prmd doc &gt; docs/api.md</code></li>
 </ol>
 <p><a href="http://json-schema.org/documentation.html">JSON Schema</a> is the general format used for types and <a href="http://json-schema.org/latest/json-schema-hypermedia.html">JSON Hyper-Schema</a> is used for
 endpoint definitions.</p>
@@ -376,5 +375,5 @@ https://groups.google.com/forum/#!forum/usgo-online-ratings</p>
 
 <!--
 MkDocs version : 0.15.3
-Build Date UTC : 2016-07-23 09:00:19.419186
+Build Date UTC : 2016-07-23 19:24:48.426971
 -->

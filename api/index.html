@@ -290,7 +290,7 @@
 </code></pre>
 
 <h3 id="game-sgf">Game SGF</h3>
-<p>Fetch the sgf contents</p>
+<p>Fetch a link to the sgf contents</p>
 <pre><code>GET /api/v1/games/{game_id}/sgf
 </code></pre>
 
@@ -302,9 +302,7 @@
 <pre><code>HTTP/1.1 200 OK
 </code></pre>
 
-<pre><code class="json">{
-  &quot;data&quot;: &quot;sgf string&quot;
-}
+<pre><code class="json">http://example.com/link/to/game.sgf
 </code></pre>
 
 <h2 id="player"><a name="resource-player">Player</a></h2>
