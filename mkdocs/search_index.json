@@ -107,17 +107,17 @@
         }, 
         {
             "location": "/api/", 
-            "text": "Game\n\n\nLoosely based off the example in the README\n\n\nAttributes\n\n\n\n\n\n\n\n\nName\n\n\nType\n\n\nDescription\n\n\nExample\n\n\n\n\n\n\n\n\n\n\nblack_id\n\n\ninteger\n\n\nblack player's id\n\n\n42\n\n\n\n\n\n\ndate_played\n\n\ndate-time\n\n\ntime the game was played\n\n\n\"2015-01-01T12:00:00Z\"\n\n\n\n\n\n\ngame_record\n\n\nstring\n\n\ngame record in SGF\n\n\n\"\nraw sgf string\n\"\n\n\n\n\n\n\ngame_server\n\n\nstring\n\n\ngame server id\n\n\n\"KGS\"\n\n\n\n\n\n\nid\n\n\ninteger\n\n\nthis could be a uuid to make it db agnostic\n\n\n42\n\n\n\n\n\n\nrated\n\n\nboolean\n\n\nwhether this was a rated game (on the server?)\n\n\ntrue\n\n\n\n\n\n\nwhite_id\n\n\ninteger\n\n\nwhite player's id\n\n\n42\n\n\n\n\n\n\n\n\nGame Creation\n\n\nReport a game result\n\n\nPOST /api/v1/games\n\n\n\n\nRequired Parameters\n\n\n\n\n\n\n\n\nName\n\n\nType\n\n\nDescription\n\n\nExample\n\n\n\n\n\n\n\n\n\n\nblack_id\n\n\ninteger\n\n\nblack player's id\n\n\n42\n\n\n\n\n\n\ndate_played\n\n\ndate-time\n\n\ntime the game was played\n\n\n\"2015-01-01T12:00:00Z\"\n\n\n\n\n\n\ngame_record\n\n\nstring\n\n\ngame record in SGF\n\n\n\"\nraw sgf string\n\"\n\n\n\n\n\n\ngame_server\n\n\nstring\n\n\ngame server id\n\n\n\"KGS\"\n\n\n\n\n\n\nrated\n\n\nboolean\n\n\nwhether this was a rated game (on the server?)\n\n\ntrue\n\n\n\n\n\n\nwhite_id\n\n\ninteger\n\n\nwhite player's id\n\n\n42\n\n\n\n\n\n\n\n\nCurl Example\n\n\n$ curl -n -X POST http://dev.usgo.org/api/v1/games \\\n  -d '{\n  \nblack_id\n: 42,\n  \nwhite_id\n: 42,\n  \ngame_server\n: \nKGS\n,\n  \nrated\n: true,\n  \ndate_played\n: \n2015-01-01T12:00:00Z\n,\n  \ngame_record\n: \nraw sgf string\n\n}' \\\n  -H \nContent-Type: application/json\n \\\n  -H \nX-Auth-Server-Token: \nsecret server token\n \\\n  -H \nX-Auth-Black-Player-Token: \nsecret token for black player\n \\\n  -H \nX-Auth-White-Player-Token: \nsecret token for white player\n\n\n\n\n\nResponse Example\n\n\nHTTP/1.1 201 Created\n\n\n\n\n{\n  \nid\n: 42\n}\n\n\n\n\nGame Read\n\n\nGet a game result by id\n\n\nGET /api/v1/games/{game_id}\n\n\n\n\nCurl Example\n\n\n$ curl -n http://dev.usgo.org/api/v1/games/$GAME_ID\n\n\n\n\nResponse Example\n\n\nHTTP/1.1 200 OK\n\n\n\n\n{\n  \nid\n: 42,\n  \nblack_id\n: 42,\n  \nwhite_id\n: 42,\n  \ngame_server\n: \nKGS\n,\n  \nrated\n: true,\n  \ndate_played\n: \n2015-01-01T12:00:00Z\n,\n  \ngame_record\n: \nraw sgf string\n\n}\n\n\n\n\nPlayer\n\n\nI copied the database table here.\n\n\nAttributes\n\n\n\n\n\n\n\n\nName\n\n\nType\n\n\nDescription\n\n\nExample\n\n\n\n\n\n\n\n\n\n\nid\n\n\ninteger\n\n\nthis could be a uuid to make it db agnostic\n\n\n42\n\n\n\n\n\n\nname\n\n\nstring\n\n\nshould this be expanded to first_name, last_name?\n\n\n\"example\"\n\n\n\n\n\n\nserver_id\n\n\ninteger\n\n\nnot sure if this should be exposed, im just copying the table definition\n\n\n42\n\n\n\n\n\n\ntoken\n\n\nuuid\n\n\nim totally guessing that this is a uuid\n\n\n\"01234567-89ab-cdef-0123-456789abcdef\"\n\n\n\n\n\n\n\n\nPlayer Read\n\n\nGet a player by id\n\n\nGET /api/v1/players/{player_id}\n\n\n\n\nCurl Example\n\n\n$ curl -n http://dev.usgo.org/api/v1/players/$PLAYER_ID\n\n\n\n\nResponse Example\n\n\nHTTP/1.1 200 OK\n\n\n\n\n{\n  \nid\n: 42,\n  \nname\n: \nexample\n,\n  \nserver_id\n: 42,\n  \ntoken\n: \n01234567-89ab-cdef-0123-456789abcdef\n\n}", 
+            "text": "Game\n\n\nA game played between two players\n\n\nAttributes\n\n\n\n\n\n\n\n\nName\n\n\nType\n\n\nDescription\n\n\nExample\n\n\n\n\n\n\n\n\n\n\nblack_id\n\n\ninteger\n\n\nblack player id\n\n\n42\n\n\n\n\n\n\ndate_played\n\n\ndate-time\n\n\ntime the game was played\n\n\n\"2015-01-01T12:00:00Z\"\n\n\n\n\n\n\ngame_record\n\n\nstring\n\n\ngame record in SGF\n\n\n\"\nraw sgf string\n\"\n\n\n\n\n\n\ngame_server\n\n\nstring\n\n\ngame server id\n\n\n\"KGS\"\n\n\n\n\n\n\nid\n\n\ninteger\n\n\ngame id\n\n\n42\n\n\n\n\n\n\nwhite_id\n\n\ninteger\n\n\nwhite player id\n\n\n42\n\n\n\n\n\n\n\n\nGame Creation\n\n\nReport a game result\n\n\nPOST /api/v1/games\n\n\n\n\nRequired Parameters\n\n\n\n\n\n\n\n\nName\n\n\nType\n\n\nDescription\n\n\nExample\n\n\n\n\n\n\n\n\n\n\nblack_id\n\n\ninteger\n\n\nblack player id\n\n\n42\n\n\n\n\n\n\ndate_played\n\n\ndate-time\n\n\ntime the game was played\n\n\n\"2015-01-01T12:00:00Z\"\n\n\n\n\n\n\ngame_server\n\n\nstring\n\n\ngame server id\n\n\n\"KGS\"\n\n\n\n\n\n\nwhite_id\n\n\ninteger\n\n\nwhite player id\n\n\n42\n\n\n\n\n\n\n\n\nOptional Parameters\n\n\n\n\n\n\n\n\nName\n\n\nType\n\n\nDescription\n\n\nExample\n\n\n\n\n\n\n\n\n\n\ngame_record\n\n\nstring\n\n\ngame record in SGF\n\n\n\"\nraw sgf string\n\"\n\n\n\n\n\n\ngame_url\n\n\nstring\n\n\ngame url\n\n\n\"http://example.com/game.sgf\"\n\n\n\n\n\n\n\n\nCurl Example\n\n\n$ curl -n -X POST http://dev.usgo.org/api/v1/games \\\n  -d '{\n  \nblack_id\n: 42,\n  \nwhite_id\n: 42,\n  \ngame_server\n: \nKGS\n,\n  \ndate_played\n: \n2015-01-01T12:00:00Z\n,\n  \ngame_record\n: \nraw sgf string\n,\n  \ngame_url\n: \nhttp://example.com/game.sgf\n\n}' \\\n  -H \nContent-Type: application/json\n \\\n  -H \nX-Auth-Server-Token: \nsecret server token\n \\\n  -H \nX-Auth-Black-Player-Token: \nsecret token for black player\n \\\n  -H \nX-Auth-White-Player-Token: \nsecret token for white player\n\n\n\n\n\nResponse Example\n\n\nHTTP/1.1 201 Created\n\n\n\n\n{\n  \nid\n: 42\n}\n\n\n\n\nGame Read\n\n\nGet a game result by id\n\n\nGET /api/v1/games/{game_id}\n\n\n\n\nCurl Example\n\n\n$ curl -n http://dev.usgo.org/api/v1/games/$GAME_ID\n\n\n\n\nResponse Example\n\n\nHTTP/1.1 200 OK\n\n\n\n\n{\n  \nid\n: 42,\n  \nblack_id\n: 42,\n  \nwhite_id\n: 42,\n  \ngame_server\n: \nKGS\n,\n  \ndate_played\n: \n2015-01-01T12:00:00Z\n,\n  \ngame_record\n: \nraw sgf string\n\n}\n\n\n\n\nGame SGF\n\n\nFetch the sgf contents\n\n\nGET /api/v1/games/{game_id}/sgf\n\n\n\n\nCurl Example\n\n\n$ curl -n http://dev.usgo.org/api/v1/games/$GAME_ID/sgf\n\n\n\n\nResponse Example\n\n\nHTTP/1.1 200 OK\n\n\n\n\n{\n  \ndata\n: \nsgf string\n\n}\n\n\n\n\nPlayer\n\n\nAn online player\n\n\nAttributes\n\n\n\n\n\n\n\n\nName\n\n\nType\n\n\nDescription\n\n\nExample\n\n\n\n\n\n\n\n\n\n\nid\n\n\ninteger\n\n\nplayer id\n\n\n42\n\n\n\n\n\n\nname\n\n\nstring\n\n\nname of the player\n\n\n\"example\"\n\n\n\n\n\n\n\n\nPlayer Read\n\n\nGet a player by id\n\n\nGET /api/v1/players/{player_id}\n\n\n\n\nCurl Example\n\n\n$ curl -n http://dev.usgo.org/api/v1/players/$PLAYER_ID\n\n\n\n\nResponse Example\n\n\nHTTP/1.1 200 OK\n\n\n\n\n{\n  \nid\n: 42,\n  \nname\n: \nexample\n\n}", 
             "title": "API"
         }, 
         {
             "location": "/api/#game", 
-            "text": "Loosely based off the example in the README", 
+            "text": "A game played between two players", 
             "title": "Game"
         }, 
         {
             "location": "/api/#attributes", 
-            "text": "Name  Type  Description  Example      black_id  integer  black player's id  42    date_played  date-time  time the game was played  \"2015-01-01T12:00:00Z\"    game_record  string  game record in SGF  \" raw sgf string \"    game_server  string  game server id  \"KGS\"    id  integer  this could be a uuid to make it db agnostic  42    rated  boolean  whether this was a rated game (on the server?)  true    white_id  integer  white player's id  42", 
+            "text": "Name  Type  Description  Example      black_id  integer  black player id  42    date_played  date-time  time the game was played  \"2015-01-01T12:00:00Z\"    game_record  string  game record in SGF  \" raw sgf string \"    game_server  string  game server id  \"KGS\"    id  integer  game id  42    white_id  integer  white player id  42", 
             "title": "Attributes"
         }, 
         {
@@ -127,12 +127,17 @@
         }, 
         {
             "location": "/api/#required-parameters", 
-            "text": "Name  Type  Description  Example      black_id  integer  black player's id  42    date_played  date-time  time the game was played  \"2015-01-01T12:00:00Z\"    game_record  string  game record in SGF  \" raw sgf string \"    game_server  string  game server id  \"KGS\"    rated  boolean  whether this was a rated game (on the server?)  true    white_id  integer  white player's id  42", 
+            "text": "Name  Type  Description  Example      black_id  integer  black player id  42    date_played  date-time  time the game was played  \"2015-01-01T12:00:00Z\"    game_server  string  game server id  \"KGS\"    white_id  integer  white player id  42", 
             "title": "Required Parameters"
         }, 
         {
+            "location": "/api/#optional-parameters", 
+            "text": "Name  Type  Description  Example      game_record  string  game record in SGF  \" raw sgf string \"    game_url  string  game url  \"http://example.com/game.sgf\"", 
+            "title": "Optional Parameters"
+        }, 
+        {
             "location": "/api/#curl-example", 
-            "text": "$ curl -n -X POST http://dev.usgo.org/api/v1/games \\\n  -d '{\n   black_id : 42,\n   white_id : 42,\n   game_server :  KGS ,\n   rated : true,\n   date_played :  2015-01-01T12:00:00Z ,\n   game_record :  raw sgf string \n}' \\\n  -H  Content-Type: application/json  \\\n  -H  X-Auth-Server-Token:  secret server token  \\\n  -H  X-Auth-Black-Player-Token:  secret token for black player  \\\n  -H  X-Auth-White-Player-Token:  secret token for white player", 
+            "text": "$ curl -n -X POST http://dev.usgo.org/api/v1/games \\\n  -d '{\n   black_id : 42,\n   white_id : 42,\n   game_server :  KGS ,\n   date_played :  2015-01-01T12:00:00Z ,\n   game_record :  raw sgf string ,\n   game_url :  http://example.com/game.sgf \n}' \\\n  -H  Content-Type: application/json  \\\n  -H  X-Auth-Server-Token:  secret server token  \\\n  -H  X-Auth-Black-Player-Token:  secret token for black player  \\\n  -H  X-Auth-White-Player-Token:  secret token for white player", 
             "title": "Curl Example"
         }, 
         {
@@ -152,17 +157,32 @@
         }, 
         {
             "location": "/api/#response-example_1", 
-            "text": "HTTP/1.1 200 OK  {\n   id : 42,\n   black_id : 42,\n   white_id : 42,\n   game_server :  KGS ,\n   rated : true,\n   date_played :  2015-01-01T12:00:00Z ,\n   game_record :  raw sgf string \n}", 
+            "text": "HTTP/1.1 200 OK  {\n   id : 42,\n   black_id : 42,\n   white_id : 42,\n   game_server :  KGS ,\n   date_played :  2015-01-01T12:00:00Z ,\n   game_record :  raw sgf string \n}", 
+            "title": "Response Example"
+        }, 
+        {
+            "location": "/api/#game-sgf", 
+            "text": "Fetch the sgf contents  GET /api/v1/games/{game_id}/sgf", 
+            "title": "Game SGF"
+        }, 
+        {
+            "location": "/api/#curl-example_2", 
+            "text": "$ curl -n http://dev.usgo.org/api/v1/games/$GAME_ID/sgf", 
+            "title": "Curl Example"
+        }, 
+        {
+            "location": "/api/#response-example_2", 
+            "text": "HTTP/1.1 200 OK  {\n   data :  sgf string \n}", 
             "title": "Response Example"
         }, 
         {
             "location": "/api/#player", 
-            "text": "I copied the database table here.", 
+            "text": "An online player", 
             "title": "Player"
         }, 
         {
             "location": "/api/#attributes_1", 
-            "text": "Name  Type  Description  Example      id  integer  this could be a uuid to make it db agnostic  42    name  string  should this be expanded to first_name, last_name?  \"example\"    server_id  integer  not sure if this should be exposed, im just copying the table definition  42    token  uuid  im totally guessing that this is a uuid  \"01234567-89ab-cdef-0123-456789abcdef\"", 
+            "text": "Name  Type  Description  Example      id  integer  player id  42    name  string  name of the player  \"example\"", 
             "title": "Attributes"
         }, 
         {
@@ -171,13 +191,13 @@
             "title": "Player Read"
         }, 
         {
-            "location": "/api/#curl-example_2", 
+            "location": "/api/#curl-example_3", 
             "text": "$ curl -n http://dev.usgo.org/api/v1/players/$PLAYER_ID", 
             "title": "Curl Example"
         }, 
         {
-            "location": "/api/#response-example_2", 
-            "text": "HTTP/1.1 200 OK  {\n   id : 42,\n   name :  example ,\n   server_id : 42,\n   token :  01234567-89ab-cdef-0123-456789abcdef \n}", 
+            "location": "/api/#response-example_3", 
+            "text": "HTTP/1.1 200 OK  {\n   id : 42,\n   name :  example \n}", 
             "title": "Response Example"
         }
     ]

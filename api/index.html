@@ -76,6 +76,8 @@
                 
                     <li><a class="toctree-l4" href="#game-read">Game Read</a></li>
                 
+                    <li><a class="toctree-l4" href="#game-sgf">Game SGF</a></li>
+                
             
                 <li class="toctree-l3"><a href="#player">Player</a></li>
                 
@@ -122,7 +124,7 @@
             <div class="section">
               
                 <h2 id="game"><a name="resource-game">Game</a></h2>
-<p>Loosely based off the example in the README</p>
+<p>A game played between two players</p>
 <h3 id="attributes">Attributes</h3>
 <table>
 <thead>
@@ -135,9 +137,9 @@
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="#resource-player">black_id</a></strong></td>
+<td><strong>black_id</strong></td>
 <td><em>integer</em></td>
-<td>black player's id</td>
+<td>black player id</td>
 <td><code>42</code></td>
 </tr>
 <tr>
@@ -161,19 +163,13 @@
 <tr>
 <td><strong>id</strong></td>
 <td><em>integer</em></td>
-<td>this could be a uuid to make it db agnostic</td>
+<td>game id</td>
 <td><code>42</code></td>
 </tr>
 <tr>
-<td><strong>rated</strong></td>
-<td><em>boolean</em></td>
-<td>whether this was a rated game (on the server?)</td>
-<td><code>true</code></td>
-</tr>
-<tr>
-<td><strong><a href="#resource-player">white_id</a></strong></td>
+<td><strong>white_id</strong></td>
 <td><em>integer</em></td>
-<td>white player's id</td>
+<td>white player id</td>
 <td><code>42</code></td>
 </tr>
 </tbody>
@@ -197,7 +193,7 @@
 <tr>
 <td><strong>black_id</strong></td>
 <td><em>integer</em></td>
-<td>black player's id</td>
+<td>black player id</td>
 <td><code>42</code></td>
 </tr>
 <tr>
@@ -207,28 +203,41 @@
 <td><code>"2015-01-01T12:00:00Z"</code></td>
 </tr>
 <tr>
-<td><strong>game_record</strong></td>
-<td><em>string</em></td>
-<td>game record in SGF</td>
-<td><code>"&lt;raw sgf string&gt;"</code></td>
-</tr>
-<tr>
 <td><strong>game_server</strong></td>
 <td><em>string</em></td>
 <td>game server id</td>
 <td><code>"KGS"</code></td>
 </tr>
 <tr>
-<td><strong>rated</strong></td>
-<td><em>boolean</em></td>
-<td>whether this was a rated game (on the server?)</td>
-<td><code>true</code></td>
-</tr>
-<tr>
 <td><strong>white_id</strong></td>
 <td><em>integer</em></td>
-<td>white player's id</td>
+<td>white player id</td>
 <td><code>42</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="optional-parameters">Optional Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>game_record</strong></td>
+<td><em>string</em></td>
+<td>game record in SGF</td>
+<td><code>"&lt;raw sgf string&gt;"</code></td>
+</tr>
+<tr>
+<td><strong>game_url</strong></td>
+<td><em>string</em></td>
+<td>game url</td>
+<td><code>"http://example.com/game.sgf"</code></td>
 </tr>
 </tbody>
 </table>
@@ -238,9 +247,9 @@
   &quot;black_id&quot;: 42,
   &quot;white_id&quot;: 42,
   &quot;game_server&quot;: &quot;KGS&quot;,
-  &quot;rated&quot;: true,
   &quot;date_played&quot;: &quot;2015-01-01T12:00:00Z&quot;,
-  &quot;game_record&quot;: &quot;&lt;raw sgf string&gt;&quot;
+  &quot;game_record&quot;: &quot;&lt;raw sgf string&gt;&quot;,
+  &quot;game_url&quot;: &quot;http://example.com/game.sgf&quot;
 }' \
   -H &quot;Content-Type: application/json&quot; \
   -H &quot;X-Auth-Server-Token: &lt;secret server token&gt;&quot; \
@@ -275,14 +284,31 @@
   &quot;black_id&quot;: 42,
   &quot;white_id&quot;: 42,
   &quot;game_server&quot;: &quot;KGS&quot;,
-  &quot;rated&quot;: true,
   &quot;date_played&quot;: &quot;2015-01-01T12:00:00Z&quot;,
   &quot;game_record&quot;: &quot;&lt;raw sgf string&gt;&quot;
 }
 </code></pre>
 
+<h3 id="game-sgf">Game SGF</h3>
+<p>Fetch the sgf contents</p>
+<pre><code>GET /api/v1/games/{game_id}/sgf
+</code></pre>
+
+<h4 id="curl-example_2">Curl Example</h4>
+<pre><code class="bash">$ curl -n http://dev.usgo.org/api/v1/games/$GAME_ID/sgf
+</code></pre>
+
+<h4 id="response-example_2">Response Example</h4>
+<pre><code>HTTP/1.1 200 OK
+</code></pre>
+
+<pre><code class="json">{
+  &quot;data&quot;: &quot;sgf string&quot;
+}
+</code></pre>
+
 <h2 id="player"><a name="resource-player">Player</a></h2>
-<p>I copied the database table here.</p>
+<p>An online player</p>
 <h3 id="attributes_1">Attributes</h3>
 <table>
 <thead>
@@ -297,26 +323,14 @@
 <tr>
 <td><strong>id</strong></td>
 <td><em>integer</em></td>
-<td>this could be a uuid to make it db agnostic</td>
+<td>player id</td>
 <td><code>42</code></td>
 </tr>
 <tr>
 <td><strong>name</strong></td>
 <td><em>string</em></td>
-<td>should this be expanded to first_name, last_name?</td>
+<td>name of the player</td>
 <td><code>"example"</code></td>
-</tr>
-<tr>
-<td><strong>server_id</strong></td>
-<td><em>integer</em></td>
-<td>not sure if this should be exposed, im just copying the table definition</td>
-<td><code>42</code></td>
-</tr>
-<tr>
-<td><strong>token</strong></td>
-<td><em>uuid</em></td>
-<td>im totally guessing that this is a uuid</td>
-<td><code>"01234567-89ab-cdef-0123-456789abcdef"</code></td>
 </tr>
 </tbody>
 </table>
@@ -325,19 +339,17 @@
 <pre><code>GET /api/v1/players/{player_id}
 </code></pre>
 
-<h4 id="curl-example_2">Curl Example</h4>
+<h4 id="curl-example_3">Curl Example</h4>
 <pre><code class="bash">$ curl -n http://dev.usgo.org/api/v1/players/$PLAYER_ID
 </code></pre>
 
-<h4 id="response-example_2">Response Example</h4>
+<h4 id="response-example_3">Response Example</h4>
 <pre><code>HTTP/1.1 200 OK
 </code></pre>
 
 <pre><code class="json">{
   &quot;id&quot;: 42,
-  &quot;name&quot;: &quot;example&quot;,
-  &quot;server_id&quot;: 42,
-  &quot;token&quot;: &quot;01234567-89ab-cdef-0123-456789abcdef&quot;
+  &quot;name&quot;: &quot;example&quot;
 }
 </code></pre>
               
